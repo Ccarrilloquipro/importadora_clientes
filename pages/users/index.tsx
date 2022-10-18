@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Sidebar from '../../components/Sidebar'
 import DataTable from 'react-data-table-component';
 import { useState } from 'react';
+import Header from '../../components/Header';
 
 const Users: NextPage = () => {
 
@@ -55,15 +56,7 @@ const Users: NextPage = () => {
             <div className='container mx-4'>
 
                 <div className='row'>
-                    <div className='col-12'>
-                        <div className='d-flex align-items-center my-3'>
-                            <p className='m-0 text-dark fw-bold fs-5'>¡Hola  Luis!</p>
-                            <div className='ms-auto'>
-                                <i className="bi bi-bell me-3 text-dark fw-bold "></i>
-                                <button type="button" className="btn btn-link text-dark fw-bold text-decoration-none">Cerrar sesión</button>
-                            </div>
-                        </div>
-                    </div>
+                    <Header />
 
                     <div className='col-12'>
                         <div className='d-flex align-items-center my-4'>
@@ -72,10 +65,10 @@ const Users: NextPage = () => {
                                 <span className="input-group-text bg-white" ><i className="bi bi-search"></i></span>
                                 <input type="text" className="form-control" placeholder="Modelo, No. de serie, usuario" />
                             </div>
-                            <button type="button" className="ms-auto btn btn-warning">Nueva importación</button>
+                            <button type="button" className="ms-auto btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">Nueva importación</button>
                         </div>
                     </div>
-                    
+
                     {/* <div className='col-12'>
                         <div className='d-flex align-items-center my-4'>
                             <p className='m-0 text-secondary fw-bold me-3'>Filtros</p>
@@ -115,6 +108,49 @@ const Users: NextPage = () => {
                     </div>
                 </div>
 
+            </div>
+
+
+            <div className="modal fade" id="exampleModal">
+                <div className="modal-dialog modal-fullscreen">
+                    <div className="modal-content">
+                        <div className="modal-body">
+                        <div className='bg-white'>
+                            <div className='container mx-auto'>
+                                <Header altertative title='' />
+
+                                <div className='row'>
+                                    <div className='col-12'>
+
+                                        <div className='d-flex justify-content-center mt-5'>
+                                            <div className='card card-hover bg-gray d-inline-block w-25 me-5'>
+                                                <div className='card-body'>
+                                                    <div className='bg-warning mb-3'>
+                                                        <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
+                                                    </div>
+
+                                                    <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Nuevo usuario</button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className='card card-hover bg-gray d-inline-block w-25'>
+                                                <div className='card-body'>
+                                                    <div className='bg-warning mb-3'>
+                                                        <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
+                                                    </div>
+
+                                                    <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Usuario existente</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
 
         </main>

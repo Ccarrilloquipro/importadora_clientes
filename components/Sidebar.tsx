@@ -4,7 +4,11 @@ import Link from 'next/link'
 function Sidebar() {
     return (
         <div className='sidebar d-flex flex-column flex-shrink-0  ' style={{ width: '280px' }}>
-            <img src='/images/logo.png' alt='Registro Vehicular' className='d-block mx-auto logo' style={{ width: '110px' }} />
+
+            <Link href='/analytics'>
+                <a><img src='/images/logo.png' alt='Registro Vehicular' className='d-block mx-auto logo' style={{ width: '110px' }} /></a>
+            </Link>
+
 
             <ul className="list-group">
                 <li className="list-group-item current">

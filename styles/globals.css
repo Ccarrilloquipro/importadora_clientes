@@ -3,15 +3,22 @@
 body{
     font-family: 'Open Sans', sans-serif;
     min-height: 100vh;
+    background-color: #F4F4F4;
 }
-#__next, main{
+main{
     height: 100vh;
     max-height: 100vh;
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: auto;
+}
+#__next.full, main.full{
+    height: 100vh;
+    max-height: 100vh;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 main{
-    background-color: #F4F4F4;
+    /* background-color: #F4F4F4; */
 }
 .h-full{
     height: 100vh;
@@ -30,6 +37,11 @@ main{
     font-size: 20px;
     font-weight: bold;
     color: #000000;
+}
+.form-label-alternative{
+    font-size: 16px;
+    font-weight: 600;
+    color: #707070;
 }
 .title{
     font-size: 28px;
@@ -72,11 +84,45 @@ main{
     color: #FFFFFF;
 }
 
-.input-group-search input{
+.input-group-search span{
+    border: none;
+}
+.input-group-search input.form-control{
     border-left: none;
     padding-left: 0;
 }
-.input-group-search input:focus{
+.input-group-search input.form-control:focus{
     box-shadow: none;
     border-color: #ced4da;
+}
+
+
+input.form-control{
+    border-radius: 4px;
+    border: none;
+    padding: 12px 18px;
+}
+
+.btn{
+    border-radius: 19px;;
+}
+
+.card{
+    border: none;
+    border-radius: 4px;
+}
+
+.text-gray{
+    color: #707070;
+}
+
+.bg-gray{
+    background-color: #F4F4F4;
+}
+.card-hover{
+    border-radius: 9px;
+}
+.card-hover:hover{
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    cursor: pointer;
 }
