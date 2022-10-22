@@ -1,28 +1,17 @@
 import type { NextPage } from 'next'
 import Sidebar from '../../components/Sidebar'
 import DataTable from 'react-data-table-component';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
+import PrivatePage from '../../components/PrivatePage';
+import Link from 'next/link';
+import { UserService } from '../../services/userService';
 
 const Users: NextPage = () => {
 
-    const [data, setData] = useState([
-        {
-            id: 1,
-            title: `item ${1}`,
-            year: '1984',
-        },
-        {
-            id: 2,
-            title: `item ${2}`,
-            year: '1984',
-        },
-        {
-            id: 3,
-            title: `item ${3}`,
-            year: '1984',
-        },
-    ])
+    const [data, setData] = useState([])
+    const [dataFiltered, setDataFiltered] = useState([])
+    const [filterTerm, setFilterTerm] = useState('')
 
 
     const paginationComponentOptions = {
@@ -35,41 +24,93 @@ const Users: NextPage = () => {
 
     const columns = [
         {
-            name: 'Title',
-            selector: (row: any) => row.title,
+            name: 'Nombre',
+            sortable: true,
+            reorder: true,
+            cell: (row: any) => <Link href={{ pathname: '/imports/form', query: { user: row.id } }} ><a>{row.nombres}</a></Link>
+        },
+        {
+            name: 'Apellido',
+            selector: (row: any) => row.apellidos,
             sortable: true,
             reorder: true,
         },
         {
-            name: 'Year',
-            selector: (row: any) => row.year,
+            name: 'Fecha de creación',
+            selector: (row: any) => row.created_at,
+            sortable: true,
+            reorder: true,
+        },
+        {
+            name: 'Ubicación',
+            selector: (row: any) => row.ciudad,
+            sortable: true,
+            reorder: true,
+        },
+        {
+            name: 'No. importaciones',
+            selector: (row: any) => row.cuantos,
             sortable: true,
             reorder: true,
         },
     ];
 
+    const getList = async() => {
+        const response = await UserService.getList();
+        setData(response)
+        setDataFiltered(response)
+    }
+
+
+    useEffect(() => {
+        if(filterTerm) {
+            const regex = new RegExp(filterTerm, 'i');
+
+            const filtered = data.filter(( row: any) => {
+
+                const fullName = `${row.nombres || ''} ${row.apellidos || ''}`;
+
+                return  (fullName && regex.test(fullName) ) ||
+                        (row.ciudad && regex.test(row.ciudad) ) 
+            })
+    
+            setDataFiltered(filtered)
+        } else {
+            setDataFiltered(data)
+        }
+        
+    }, [filterTerm])
+
+    useEffect(() => {
+        getList()
+    }, [])
+    
+
     return (
-        <main className='d-flex flex-nowrap'>
+        <PrivatePage>
+            <main className='d-flex flex-nowrap'>
 
-            <Sidebar />
+                <Sidebar />
 
-            <div className='container mx-4'>
+                <div className='container mx-4'>
 
-                <div className='row'>
-                    <Header />
+                    <div className='row'>
+                        <Header />
 
-                    <div className='col-12'>
-                        <div className='d-flex align-items-center my-4'>
-                            <p className='m-0 text-secondary fw-bold me-3'>Usuario</p>
-                            <div className="input-group input-group-search flex-nowrap w-25">
-                                <span className="input-group-text bg-white" ><i className="bi bi-search"></i></span>
-                                <input type="text" className="form-control" placeholder="Modelo, No. de serie, usuario" />
+                        <div className='col-12'>
+                            <div className='d-flex align-items-center my-4'>
+                                <p className='m-0 text-secondary fw-bold me-3'>Usuario</p>
+                                <div className="input-group input-group-search flex-nowrap w-50">
+                                    <span className="input-group-text bg-white" ><i className="bi bi-search"></i></span>
+                                    <input type="text" className="form-control" placeholder="Escribe para filtrar" value={filterTerm}  onChange={ ({ target }: any) => setFilterTerm(target.value)} />
+                                </div>
+                                <Link href="/users/handle-user">
+                                    <button type="button" className="ms-auto btn btn-warning" >Nueva importación</button>
+                                </Link>
                             </div>
-                            <button type="button" className="ms-auto btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">Nueva importación</button>
                         </div>
-                    </div>
 
-                    {/* <div className='col-12'>
+                        {/* <div className='col-12'>
                         <div className='d-flex align-items-center my-4'>
                             <p className='m-0 text-secondary fw-bold me-3'>Filtros</p>
                             <select className="form-select me-3 w-auto" defaultValue=''>
@@ -88,72 +129,30 @@ const Users: NextPage = () => {
                     </div> */}
 
 
-                    <div className='col-12'>
-                        <div className='card'>
-                            <div className='card-body'>
+                        <div className='col-12'>
+                            <div className='card'>
+                                <div className='card-body'>
 
 
-                                <DataTable
-                                    defaultSortFieldId={1}
-                                    columns={columns}
-                                    data={data}
-                                    pagination
-                                    paginationComponentOptions={paginationComponentOptions}
-                                    responsive
-                                />
+                                    <DataTable
+                                        defaultSortFieldId={1}
+                                        columns={columns}
+                                        data={dataFiltered}
+                                        pagination
+                                        paginationComponentOptions={paginationComponentOptions}
+                                        responsive
+                                    />
 
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div className="modal fade" id="exampleModal">
-                <div className="modal-dialog modal-fullscreen">
-                    <div className="modal-content">
-                        <div className="modal-body">
-                        <div className='bg-white'>
-                            <div className='container mx-auto'>
-                                <Header altertative title='' />
-
-                                <div className='row'>
-                                    <div className='col-12'>
-
-                                        <div className='d-flex justify-content-center mt-5'>
-                                            <div className='card card-hover bg-gray d-inline-block w-25 me-5'>
-                                                <div className='card-body'>
-                                                    <div className='bg-warning mb-3'>
-                                                        <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
-                                                    </div>
-
-                                                    <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Nuevo usuario</button>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className='card card-hover bg-gray d-inline-block w-25'>
-                                                <div className='card-body'>
-                                                    <div className='bg-warning mb-3'>
-                                                        <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
-                                                    </div>
-
-                                                    <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Usuario existente</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
 
-        </main>
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+        </PrivatePage>
     )
 }
 

@@ -2,13 +2,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
 import Header from '../../components/Header'
+import PrivatePage from '../../components/PrivatePage'
 
 function UserDetail() {
 
     const router = useRouter()
 
     return (
-        <>
+        <PrivatePage>
             <div className='bg-white'>
                 <div className='container mx-auto'>
                     <Header altertative title='' />
@@ -140,8 +141,7 @@ function UserDetail() {
                     </div>
                 </div>
             </main>
-        </>
-
+        </PrivatePage>
     )
 }
 

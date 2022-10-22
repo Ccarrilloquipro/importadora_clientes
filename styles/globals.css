@@ -8,8 +8,8 @@ body{
 main{
     height: 100vh;
     max-height: 100vh;
-    overflow-x: auto;
-    overflow-y: auto;
+    /* overflow-x: auto;
+    overflow-y: auto; */
 }
 #__next.full, main.full{
     height: 100vh;
@@ -79,6 +79,10 @@ main{
     padding-left: 28px;
 }
 
+.card.is-invalid,img.is-invalid{
+    border: 1px solid #dc3545;
+}
+
 .rdt_TableHead .rdt_TableHeadRow{
     background-color: #666666;
     color: #FFFFFF;
@@ -97,7 +101,7 @@ main{
 }
 
 
-input.form-control{
+input.form-control, select.form-select{
     border-radius: 4px;
     border: none;
     padding: 12px 18px;
@@ -125,4 +129,13 @@ input.form-control{
 .card-hover:hover{
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
     cursor: pointer;
+}
+
+.avatar{
+    height: 150px;
+    width: 150px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 100%;
 }
