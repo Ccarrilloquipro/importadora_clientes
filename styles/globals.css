@@ -163,3 +163,23 @@ input.form-control, select.form-select{
 .cursor-pointer{
     cursor: pointer;
 }
+
+.card-radius{
+    border-radius: 43px;
+}
+.card-blue{
+    background: #4174FF 0% 0% no-repeat padding-box;
+    color: #fff;
+}
+
+.ads{
+    background-image: url('/images/dummy-ads.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 100%;
+    border-radius: 43px;
+}
+.border-12{
+    border-radius: 12px;
+}

@@ -12,7 +12,7 @@ function PrivatePage({ children }: any) {
 
         if(typeof window === 'undefined') return ;
 
-        const session = LocalStorageService.get('imp-session')
+        const session = LocalStorageService.get('imp-session-client')
 
         if(!session) {
             router.replace('/auth/login');

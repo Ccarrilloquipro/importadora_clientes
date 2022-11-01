@@ -8,7 +8,7 @@ const _HTTP_ = axios.create();
 
 _HTTP_.interceptors.request.use(
     (config: any) => {
-        const session = LocalStorageService.get('imp-session');
+        const session = LocalStorageService.get('imp-session-client');
         if(session && session.token) {
             config.headers.Authorization = `Bearer ${session.token}`;
         }

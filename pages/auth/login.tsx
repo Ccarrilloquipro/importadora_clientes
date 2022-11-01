@@ -20,8 +20,8 @@ const Login: NextPage = () => {
         try {
             const response = await AuthService.login(data);
 
-            LocalStorageService.save('imp-session', response);
-            router.replace('/analytics');
+            LocalStorageService.save('imp-session-client', response);
+            router.replace('/client/profile');
         } catch (error: any) {
             Swal.fire({
                 title: '¡Error!',
@@ -33,42 +33,35 @@ const Login: NextPage = () => {
     }
 
     return (
-        <div className='container-fluid'>
-            <div className='row h-full'>
-                <div className='col-md-6 '>
+        <div className='container-fluid bg-login h-full'>
 
+            <div className='d-flex pt-5 justify-content-center align-items-center'>
+                <form className='d-flex flex-column  px-5 bg-white w-50 ' onSubmit={handleSubmit(submit)}>
 
-                    <form className='h-100 d-flex flex-column justify-content-center px-5' onSubmit={handleSubmit(submit)}>
+                    <img src='/images/logo.png' alt='Registro Vehicular' className='mb-3 d-block mx-auto mt-5' style={{ width: '15%' }} />
+                    <h1 className='title mb-5 text-center'>Bienvenido</h1>
+                    <div className="mb-3">
+                        <label className="form-label">Correo electrónico</label>
+                        <input type="email" className={'form-control ' + (errors.email ? 'is-invalid' : '')}  {...register('email', { required: true })} placeholder="usuario@domain.com" />
+                        <div className="invalid-feedback">Campo obligatorio</div>
+                    </div>
+                    <div className="mb-5">
+                        <label className="form-label">Contraseña</label>
+                        <input type="password" className={'form-control ' + (errors.password ? 'is-invalid' : '')}   {...register('password', { required: true })} placeholder="*********" />
+                        <div className="invalid-feedback">Campo obligatorio</div>
+                    </div>
 
-                        <img src='/images/logo.png' alt='Registro Vehicular' className='mb-3 d-block mx-auto' style={{ width: '15%' }} />
-                        <h1 className='title mb-5 text-center'>Bienvenido</h1>
-                        <div className="mb-3">
-                            <label className="form-label">Correo electrónico</label>
-                            <input type="email" className={'form-control ' + (errors.email ? 'is-invalid' : '')}  {...register('email', { required: true })} placeholder="usuario@domain.com" />
-                            <div className="invalid-feedback">Campo obligatorio</div>
-                        </div>
-                        <div className="mb-5">
-                            <label className="form-label">Contraseña</label>
-                            <input type="password" className={'form-control ' + (errors.password ? 'is-invalid' : '')}   {...register('password', { required: true })} placeholder="*********" />
-                            <div className="invalid-feedback">Campo obligatorio</div>
-                        </div>
+                    <div className="d-grid gap-2 mb-5">
+                        <button type="button" className="btn btn-danger fw-bold btn-lg" onClick={handleSubmit(submit)}>Iniciar sesión</button>
+                    </div>
 
-                        <div className="d-grid gap-2 mb-5">
-                            <button type="button" className="btn btn-danger fw-bold btn-lg" onClick={handleSubmit(submit)}>Iniciar sesión</button>
-                        </div>
+                    <div className='text-center mb-5'>
+                        <button type="submit" className="btn btn-link text-secondary fw-bold" >¿Olvidaste tu contraseña?</button>
+                    </div>
 
-                        <div className='text-center mb-5'>
-                            <button type="submit" className="btn btn-link text-secondary fw-bold" >¿Olvidaste tu contraseña?</button>
-                        </div>
-
-                        <img src='/images/logo-gray.png' alt='Registro Vehicular' className='d-block mx-auto' />
-
-                    </form>
-
-                </div>
-                <div className='col-md-6 bg-login' ></div>
-
+                </form>
             </div>
+
         </div>
     )
 }

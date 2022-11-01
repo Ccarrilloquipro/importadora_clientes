@@ -8,7 +8,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
 
-    router.push('/analytics');
+    router.push('/client/profile');
 }, [])
 
   return (
