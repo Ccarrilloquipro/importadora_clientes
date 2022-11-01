@@ -5,38 +5,98 @@ import Header from '../../components/Header'
 import PrivatePage from '../../components/PrivatePage'
 import { URL_ASSETS } from '../../services/http'
 import { UserService } from '../../services/userService'
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { ImportsService } from '../../services/importsService'
+import { UploadService } from '../../services/uploadService'
+import Swal from 'sweetalert2'
 
 function FormImport() {
 
     const router = useRouter()
     const [userInfo, setUserInfo] = useState<any>()
     const [typeCard, setTypeCard] = useState([])
-    const [submitting, setSubmitting] = useState(false)
 
     const defaultValues = {
         idCliente: '',
+        origen: 'extranjero',
         idTipo: '',
         modelo: '',
         marca: '',
         ano: '',
         noFactura: '',
         noSerie: '',
+        imports: [{
+            idTipoDocumento: 0,
+            file: '',
+            pago: '',
+            requierePago: false,
+            nombre: ''
+        }]
     }
 
-    const { register, setValue, watch, handleSubmit,  formState: { errors,  } } = useForm({ defaultValues });
+    const { control, register, setValue, watch, handleSubmit, formState: { errors, isSubmitting } } = useForm({ defaultValues });
+
+    const { fields, replace } = useFieldArray({
+        control,
+        name: 'imports',
+    });
+
 
     register("idCliente", { required: true })
 
-    const submit = async (data: any) =>  {
-        console.log(data)
+    const submit = async (data: any) => {
+        try {
+
+            let params: any = {
+                idCliente: data.idCliente,
+                origen: data.origen || 'extranjero',
+                idTipo: data.idTipo,
+                modelo: data.modelo,
+                marca: data.marca,
+                ano: data.ano,
+                noFactura: data.noFactura,
+                noSerie: data.noSerie,
+                documentos: []
+            }
+
+            for (let index = 0; index < data.imports.length; index++) {
+                const row = data.imports[index];
+
+                const uploadResponse = await UploadService.upload(row.file[0])
+
+                let doc = {
+                    idTipoDocumento: row.idTipoDocumento,
+                    archivo: uploadResponse,
+                    pago: row.pago
+                }
+
+                if (!row.requierePago) {
+                    delete doc.pago
+                }
+
+                params.documentos.push(doc)
+            }
+
+            const response = await ImportsService.saveImport(params);
+        
+            await Swal.fire('¡Éxito!', 'Se guardó correctamente la importación.', 'success')
+            
+            router.push({ pathname: '/imports/detail', query: { import: response.id }})
+
+        } catch (error: any) {
+            console.log(error)
+            Swal.fire({
+                title: '¡Error!',
+                text: error.message || 'Ocurrio un error al registrar la importación, intenta nuevamente',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
+        }
     }
 
     useEffect(() => {
         const getUser = async (id: number) => {
             const response = await UserService.getClient(id)
-            console.log(response)
             setUserInfo(response)
         }
         const userID: any = router.query.user;
@@ -53,10 +113,21 @@ function FormImport() {
             const response = await ImportsService.getTypesCard()
             setTypeCard(response)
         }
+        const getTypesDocuments = async () => {
+            const response = await ImportsService.getTypesDocuments()
+
+            replace(response.map( (document: any) => ({
+                idTipoDocumento: document.id,
+                file: '',
+                monto: '',
+                requierePago: !!document.requierePago,
+                nombre: document.nombre
+            })))
+        }
 
         getTypesCard()
+        getTypesDocuments()
     }, [])
-
 
     return (
         <PrivatePage>
@@ -165,140 +236,42 @@ function FormImport() {
                             </div>
 
                             <div className='row gap-3 mt-5'>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Pedimento</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Factura</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Título de propiedad</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Actualización de no robo</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Certificado de emisiones ambientales</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Licencia de conducir</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='col-12'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div className='d-flex align-items-center '>
-                                                <div>
-                                                    <p className='m-0 form-label-alternative fw-bold'>Identificación oficial</p>
-                                                    <p className='m-0 form-text'>PDF</p>
-                                                </div>
-                                                <div className='ms-auto d-flex align-items-center '>
-                                                    <p className='m-0 me-3 form-text'>nombre archivo .pdf</p>
-                                                    <div>
-                                                        <input type='file' className='d-none' id='image-licencia' />
-                                                        <label className="btn btn-secondary px-5" htmlFor='image-licencia' >Seleccionar imagen</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {
+                                    fields.map((field: any, index: number) => (
+                                        <div className='col-12' key={field.id}>
+                                            <div className={'card ' + (errors.imports?.[index]?.file ? 'is-invalid' : '')}>
+                                                <div className='card-body'>
+                                                    <div className='d-flex align-items-center '>
+                                                        <div className='flex-grow-1'>
+                                                            <p className='m-0 form-label-alternative fw-bold'>{field.nombre}</p>
+                                                            <p className='m-0 form-text'>PDF</p>
+                                                        </div>
+                                                        {
+                                                            field.requierePago && (
+                                                                <div className="ms-auto me-5">
+                                                                    <label className="form-label form-label-alternative">Monto a pagar *</label>
+                                                                    <input type="text" className={'form-control form-control-altertative ' + (errors.imports?.[index]?.pago ? 'is-invalid' : '')}  {...register(`imports.${index}.pago`, { required: true, min: 1 })} />
+                                                                    <div className="invalid-feedback">Campo obligatorio</div>
+                                                                </div>
+                                                            )
+                                                        }
 
+                                                        <div className='ms-auto text-center '>
+
+                                                            <div>
+                                                                <input type='file' className='d-none' id={`${index}-file`} {...register(`imports.${index}.file`, { required: true })} accept='.png,.jpg,.jpeg,.pdf' />
+                                                                <label className="btn btn-secondary px-5" htmlFor={`${index}-file`} >Seleccionar imagen</label>
+
+                                                                <p className='m-0 form-text'>{(watch(`imports.${index}.file`) as any)?.[0]?.name}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="invalid-feedback">Por favor adjunta un archivo</div>
+                                        </div>
+                                    ))
+                                }
                             </div>
 
                             <div className='row mt-5'>
@@ -306,9 +279,9 @@ function FormImport() {
                                     <div className='text-end'>
 
                                         <button type="button" className="btn btn-danger px-5 me-3">Cancelar</button>
-                                        <button type="submit" className="btn btn-warning px-5" disabled={submitting}>
-                                            {submitting && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-                                            {!submitting && 'Guardar'}
+                                        <button type="submit" className="btn btn-warning px-5" disabled={isSubmitting}>
+                                            {isSubmitting && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+                                            {!isSubmitting && 'Guardar'}
                                         </button>
                                     </div>
                                 </div>

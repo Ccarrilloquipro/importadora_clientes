@@ -39,15 +39,17 @@ function HandleUser() {
                                 </div>
                             </Link>
 
-                            <div className='card card-hover bg-gray d-inline-block w-25'>
-                                <div className='card-body'>
-                                    <div className='bg-warning mb-3'>
-                                        <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
-                                    </div>
+                            <Link href="/users/list">
+                                <div className='card card-hover bg-gray d-inline-block w-25'>
+                                    <div className='card-body'>
+                                        <div className='bg-warning mb-3'>
+                                            <img src="https://via.placeholder.com/400x260" className='w-100 p-4' alt="Avatar" />
+                                        </div>
 
-                                    <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Usuario existente</button>
+                                        <button className='btn btn-link text-dark text-decoration-none fw-bold d-block mx-auto'>Usuario existente</button>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

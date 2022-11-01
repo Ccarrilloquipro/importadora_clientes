@@ -26,7 +26,7 @@ const Imports: NextPage = () => {
             name: 'Modelo de vehículo',
             sortable: true,
             reorder: true,
-            cell: (row: any) => <Link href={{ pathname: '/imports/form', query: { user: row.id } }} ><a>{row.modelo}</a></Link>
+            cell: (row: any) => <Link href={{ pathname: '/imports/detail', query: { import: row.id } }} ><a>{row.modelo}</a></Link>
         },
         {
             name: 'Marca',
@@ -139,6 +139,7 @@ const Imports: NextPage = () => {
                                         pagination
                                         paginationComponentOptions={paginationComponentOptions}
                                         responsive
+                                        noDataComponent='No hay registros para mostrar'
                                     />
 
                                 </div>

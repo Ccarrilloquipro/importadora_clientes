@@ -27,7 +27,7 @@ const Users: NextPage = () => {
             name: 'Nombre',
             sortable: true,
             reorder: true,
-            cell: (row: any) => <Link href={{ pathname: '/imports/form', query: { user: row.id } }} ><a>{row.nombres}</a></Link>
+            cell: (row: any) => <Link href={{ pathname: '/users/detail', query: { user: row.id } }} ><a>{row.nombres}</a></Link>
         },
         {
             name: 'Apellido',
@@ -141,6 +141,7 @@ const Users: NextPage = () => {
                                         pagination
                                         paginationComponentOptions={paginationComponentOptions}
                                         responsive
+                                        noDataComponent='No hay registros para mostrar'
                                     />
 
                                 </div>

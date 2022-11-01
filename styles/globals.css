@@ -139,3 +139,27 @@ input.form-control, select.form-select{
     background-size: cover;
     border-radius: 100%;
 }
+
+.form-control-altertative{
+    border: 1px solid #6c757d !important;
+}
+.form-control-altertative.is-invalid{
+    border-color: #dc3545 !important;
+}
+
+.card-black{
+    background: transparent linear-gradient(180deg, #666666 0%, #333333 100%) 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000065;
+    border-radius: 31px;
+    color: #fff;
+    padding: 24px;
+}
+.card-black .card-header{
+    border-top-left-radius: 31px;
+    border-top-right-radius: 31px;
+    border-color: #fff;
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}

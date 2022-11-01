@@ -63,17 +63,19 @@ function FormUser() {
       delete data.archivoINEFile;
       delete data.avatarWebFile;
 
-      await UserService.register(data);
+      const response = await UserService.register(data);
 
       await Swal.fire('¡Éxito!', 'Se guardó correctamente al usuario. Ahora puedes asignarle una importación', 'success')
-      router.push('/imports/form')
+      
+      router.push({ pathname: '/users/detail', query: { user: response.cliente.id }})
+
     } catch (error: any) {
       Swal.fire({
         title: '¡Error!',
         text: error.message || 'Ocurrio un error al registrar al usuario, intenta nuevamente',
         icon: 'error',
         confirmButtonText: 'Aceptar'
-    })
+      })
     } finally {
       setSubmitting(false)
     }
